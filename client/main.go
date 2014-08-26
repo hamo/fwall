@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"io"
 	"net"
 	"strconv"
 )
@@ -13,29 +14,30 @@ const (
 	port = ":1080"
 )
 
-func handShake(c net.Conn) error {
-	r := bufio.NewReader(c)
+const (
+	handShakeProtoVersion = 0
+)
 
-	protoVersion, err := r.ReadByte()
+var (
+	handShakeAnswer = []byte{0x05, 0x00}
+	reqAnswer       = []byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x08, 0x43}
+)
+
+func handShake(c net.Conn) error {
+	hsr := make([]byte, 3)
+	_, err := io.ReadFull(c, hsr)
+
 	if err != nil {
-		return err
+		return fmt.Errorf("HandShake error")
 	}
+
+	protoVersion := hsr[handShakeProtoVersion]
 
 	if protoVersion != 0x05 {
 		return fmt.Errorf("Protocol mismatch: %d", protoVersion)
 	}
 
-	_, err = r.ReadByte()
-	if err != nil {
-		return err
-	}
-
-	_, err = r.ReadByte()
-	if err != nil {
-		return err
-	}
-
-	c.Write([]byte{0x05, 0x00})
+	c.Write(handShakeAnswer)
 	return nil
 }
 
@@ -117,8 +119,7 @@ func handleTCPConnection(c net.Conn) {
 	fmt.Printf("address: %s\n", string(address.Bytes()))
 	fmt.Printf("port: %d\n", port)
 
-	// some magic
-	c.Write([]byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x08, 0x43})
+	c.Write(reqAnswer)
 
 	// Move to server
 	//	realAddr := string(address)
