@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 )
 
@@ -46,11 +47,11 @@ func doParseConfigFile(content []byte) (*localConfig, error) {
 
 func sanityCheckConfigFile(lc *localConfig) error {
 	if lc == nil {
-		panic()
+		panic("error")
 	}
 
 	// Server address and port are required
-	if lc.Server == "" || lc.ServerPort == "" {
+	if lc.Server == "" || lc.ServerPort == 0 {
 		return fmt.Errorf("Server address and port are empty")
 	}
 
