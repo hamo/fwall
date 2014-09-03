@@ -7,7 +7,14 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"os"
 	"strconv"
+
+	"github.com/hamo/golog"
+)
+
+const (
+	version = "0.1"
 )
 
 const (
@@ -23,6 +30,11 @@ const (
 var (
 	handShakeAnswer = []byte{0x05, 0x00}
 	reqAnswer       = []byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x08, 0x43}
+)
+
+var (
+	debug  = true
+	logger *golog.GoLogger
 )
 
 func handShake(c net.Conn) error {
@@ -172,16 +184,21 @@ func handleTCPConnection(c net.Conn) {
 }
 
 func main() {
+	// FIXME: configurable logger file
+	logger = golog.New(os.Stdout)
+
+	logger.Infof("fwall started. Version: %s", version)
+
 	lnTCP, err := net.Listen("tcp", port)
 	if err != nil {
-		panic(err)
+		logger.Fatalf("Listen to socks5 port failed: %s", err)
 	}
-
 	defer lnTCP.Close()
 
 	for {
 		connTCP, err := lnTCP.Accept()
 		if err != nil {
+			logger.Debugf(debug, "Accept return err: %s", err)
 			continue
 		}
 
