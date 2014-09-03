@@ -1,12 +1,14 @@
-.PHONY: all client server gopath
+GOPATH:=$(GOPATH):$(CURDIR)
+
+.PHONY: all client server goget
 
 all: client server
 
-client: gopath
-	cd client; go get -d; go build
+client: goget
+	cd client; GOPATH=$(GOPATH) go build
 
-server: gopath
-	cd server; go get -d; go build
+server: goget
+	cd server; GOPATH=$(GOPATH) go build
 
-gopath:
-	export GOPATH=`pwd`
+goget:
+	GOPATH=$(GOPATH) go get -d
