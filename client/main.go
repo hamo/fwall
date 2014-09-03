@@ -150,7 +150,7 @@ func handleTCPConnection(c net.Conn) {
 	realAddr = realAddr + ":" + strconv.Itoa(int(port))
 	remoteAddr := remote_address + remote_port
 	fmtedHeader := fmtHeader([]byte(realAddr))
-	fmt.Printf("realAddr: %s, \t remoteAddr: %s \t formatd addr: %s\n", realAddr, remoteAddr, string(fmtedHeader))
+	fmt.Printf("realAddr: %s, \t remoteAddr: %s\n", realAddr, remoteAddr)
 
 	proxyAgent, err := net.Dial("tcp", remoteAddr)
 	if err != nil {
