@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	port = ":1081"
-	remote_port = ":443"
+	port           = ":1081"
+	remote_port    = ":443"
 	remote_address = "128.199.153.182"
 )
 
@@ -101,7 +101,7 @@ func parseReq(c net.Conn) (byte, byte, *bytes.Buffer, int16, error) {
 	// commandCode, addressType, address, port, err
 	return commandCode, addressType, address, port, nil
 }
-func fmtHeader(remoteAddr []byte) ([]byte){
+func fmtHeader(remoteAddr []byte) []byte {
 	lengthByte := []byte{byte(len(remoteAddr))}
 	fmtedHeader := append(lengthByte, remoteAddr...)
 	return fmtedHeader
