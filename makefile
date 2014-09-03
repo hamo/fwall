@@ -11,7 +11,7 @@ server: goget
 	cd server; GOPATH=$(GOPATH) go build
 
 goget:
-	GOPATH=$(GOPATH) go get -d
+	GOPATH=$(GOPATH) go get -d ./...
 
 test: all
 	GOPATH=$(GOPATH) go test ./...
