@@ -12,3 +12,6 @@ server: goget
 
 goget:
 	GOPATH=$(GOPATH) go get -d
+
+test: all
+	GOPATH=$(GOPATH) go test ./...
