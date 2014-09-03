@@ -11,7 +11,9 @@ import (
 )
 
 const (
-	port = ":1080"
+	port = ":1081"
+	remote_port = ":443"
+	remote_address = "128.199.153.182"
 )
 
 const (
@@ -99,6 +101,11 @@ func parseReq(c net.Conn) (byte, byte, *bytes.Buffer, int16, error) {
 	// commandCode, addressType, address, port, err
 	return commandCode, addressType, address, port, nil
 }
+func fmtHeader(remoteAddr []byte) ([]byte){
+	lengthByte := []byte{byte(len(remoteAddr))}
+	fmtedHeader := append(lengthByte, remoteAddr...)
+	return fmtedHeader
+}
 
 func handleTCPConnection(c net.Conn) {
 	err := handShake(c)
@@ -116,7 +123,7 @@ func handleTCPConnection(c net.Conn) {
 
 	fmt.Printf("commandCode: %d\n", commandCode)
 	fmt.Printf("addressType: %d\n", addressType)
-	fmt.Printf("address: %s\n", string(address.Bytes()))
+	// fmt.Printf("address: %s\n", string(address.Bytes()))
 	fmt.Printf("port: %d\n", port)
 
 	c.Write(reqAnswer)
@@ -129,43 +136,39 @@ func handleTCPConnection(c net.Conn) {
 	}
 
 	realAddr = realAddr + ":" + strconv.Itoa(int(port))
+	remoteAddr := remote_address + remote_port
+	fmtedHeader := fmtHeader([]byte(realAddr))
+	fmt.Printf("realAddr: %s, \t remoteAddr: %s \t formatd addr: %s\n", realAddr, remoteAddr, string(fmtedHeader))
 
-	uc, err := net.Dial("tcp", realAddr)
+	proxyAgent, err := net.Dial("tcp", remoteAddr)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("succeed dial to %s\n", remoteAddr)
 
 	buf1 := make([]byte, 512)
 	buf2 := make([]byte, 512)
-
 	go func() {
+		proxyAgent.Write([]byte(fmtedHeader))
 		for {
 			n, err := c.Read(buf1)
-			uc.Write(buf1[0:n])
+			proxyAgent.Write(buf1[0:n])
 			if err != nil {
 				break
 			}
 		}
 	}()
-
 	for {
-		n, err := uc.Read(buf2)
-
+		n, err := proxyAgent.Read(buf2)
 		c.Write(buf2[0:n])
 
 		if err != nil {
 			break
 		}
 	}
-	// go func() {
-	// 	for {
-	// 		s, err := r.ReadString('\n')
-	// 		fmt.Printf("%s\n", s)
-	// 		if err != nil {
-	// 			break
-	// 		}
-	// 	}
-	// }()
 
-	// c.Write([]byte("HTTP/1.1 200 OK\r\nContent-Type: text/html;charset=utf-8\r\nContent-Length: length\r\n\r\nHELLO"))
-
+	proxyAgent.Read(buf2)
+	c.Write(buf2)
 }
 
 func main() {
