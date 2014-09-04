@@ -1,8 +1,8 @@
 package main
 
 import (
-	"net"
 	"fmt"
+	"net"
 )
 
 const (
@@ -20,6 +20,8 @@ func handleConnection(c net.Conn) {
 	if err != nil {
 		return
 	}
+	defer realServer.Close()
+
 	buf1 := make([]byte, 512)
 	buf2 := make([]byte, 512)
 
@@ -42,7 +44,7 @@ func handleConnection(c net.Conn) {
 	}
 }
 func repeater(c net.Conn) {
-	
+
 }
 func main() {
 
@@ -50,6 +52,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer lnTCP.Close()
 
 	for {
 		conn, err := lnTCP.Accept()
