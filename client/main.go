@@ -89,8 +89,8 @@ func handleTCPConnection(c net.Conn) {
 		}
 	}
 
-	proxyAgent.Read(buf2)
-	c.Write(buf2)
+	proxyAgent.Close()
+	c.Close()
 }
 
 func main() {

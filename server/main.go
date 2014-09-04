@@ -42,6 +42,9 @@ func handleConnection(c net.Conn) {
 			break
 		}
 	}
+
+	realServer.Close()
+	c.Close()
 }
 func repeater(c net.Conn) {
 
