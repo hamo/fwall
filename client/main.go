@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"net"
 	"os"
 	"strconv"
@@ -12,16 +14,21 @@ const (
 	version = "0.1"
 )
 
-const (
-	port           = ":1081"
-	remote_port    = ":443"
-	remote_address = "128.199.153.182"
+var (
+	lc *localConfig
 )
 
 var (
-	debug  = true
+	flDebug      *bool
+	flConfigFile *string
+
 	logger *golog.GoLogger
 )
+
+func init() {
+	flDebug = flag.Bool("d", false, "debug switch")
+	flConfigFile = flag.String("c", "./config.json", "config file")
+}
 
 func fmtHeader(remoteAddr []byte) []byte {
 	lengthByte := []byte{byte(len(remoteAddr))}
@@ -33,7 +40,7 @@ func handleTCPConnection(c net.Conn) {
 	err := handShake(c)
 
 	if err != nil {
-		logger.Debugf(debug, "handShake err: %s", err)
+		logger.Debugf(*flDebug, "handShake err: %s", err)
 		c.Close()
 		return
 	}
@@ -43,9 +50,9 @@ func handleTCPConnection(c net.Conn) {
 		logger.Fatalf("parseReq failed: %s", err)
 	}
 
-	logger.Debugf(debug, "commandCode: %d\n", commandCode)
-	logger.Debugf(debug, "addressType: %d\n", addressType)
-	logger.Debugf(debug, "port: %d\n", port)
+	logger.Debugf(*flDebug, "commandCode: %d\n", commandCode)
+	logger.Debugf(*flDebug, "addressType: %d\n", addressType)
+	logger.Debugf(*flDebug, "port: %d\n", port)
 
 	c.Write(reqAnswer)
 
@@ -57,7 +64,7 @@ func handleTCPConnection(c net.Conn) {
 	}
 
 	realAddr = realAddr + ":" + strconv.Itoa(int(port))
-	remoteAddr := remote_address + remote_port
+	remoteAddr := fmt.Sprintf("%s:%d", lc.Server, lc.ServerPort)
 	fmtedHeader := fmtHeader([]byte(realAddr))
 
 	proxyAgent, err := net.Dial("tcp", remoteAddr)
@@ -94,12 +101,21 @@ func handleTCPConnection(c net.Conn) {
 }
 
 func main() {
+	var err error
+
 	// FIXME: configurable logger file
 	logger = golog.New(os.Stdout)
 
+	flag.Parse()
+
+	lc, err = parseConfigFile(*flConfigFile)
+	if err != nil {
+		logger.Fatalf("Parse config file err: %s", err)
+	}
+
 	logger.Infof("fwall started. Version: %s", version)
 
-	lnTCP, err := net.Listen("tcp", port)
+	lnTCP, err := net.Listen("tcp", fmt.Sprintf(":%d", lc.LocalPort))
 	if err != nil {
 		logger.Fatalf("Listen to socks5 port failed: %s", err)
 	}
@@ -108,7 +124,7 @@ func main() {
 	for {
 		connTCP, err := lnTCP.Accept()
 		if err != nil {
-			logger.Debugf(debug, "Accept return err: %s", err)
+			logger.Debugf(*flDebug, "Accept return err: %s", err)
 			continue
 		}
 
