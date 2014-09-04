@@ -65,7 +65,7 @@ func handleTCPConnection(c net.Conn) {
 		logger.Warningf("Dial to %s failed: %s", remoteAddr, err)
 	}
 	defer proxyAgent.Close()
-	logger.Infof("Connecting to $s", realAddr)
+	logger.Infof("Connecting to %s", realAddr)
 
 	buf1 := make([]byte, 512)
 	buf2 := make([]byte, 512)
