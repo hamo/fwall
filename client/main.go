@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net"
 	"os"
 	"strconv"
@@ -34,20 +33,19 @@ func handleTCPConnection(c net.Conn) {
 	err := handShake(c)
 
 	if err != nil {
-		fmt.Printf("DEBUG: handShake err: %s", err)
+		logger.Debugf(debug, "handShake err: %s", err)
 		c.Close()
 		return
 	}
 
 	commandCode, addressType, address, port, err := parseReq(c)
 	if err != nil {
-		panic(err)
+		logger.Fatalf("parseReq failed: %s", err)
 	}
 
-	fmt.Printf("commandCode: %d\n", commandCode)
-	fmt.Printf("addressType: %d\n", addressType)
-	// fmt.Printf("address: %s\n", string(address.Bytes()))
-	fmt.Printf("port: %d\n", port)
+	logger.Debugf(debug, "commandCode: %d\n", commandCode)
+	logger.Debugf(debug, "addressType: %d\n", addressType)
+	logger.Debugf(debug, "port: %d\n", port)
 
 	c.Write(reqAnswer)
 
@@ -61,13 +59,13 @@ func handleTCPConnection(c net.Conn) {
 	realAddr = realAddr + ":" + strconv.Itoa(int(port))
 	remoteAddr := remote_address + remote_port
 	fmtedHeader := fmtHeader([]byte(realAddr))
-	fmt.Printf("realAddr: %s, \t remoteAddr: %s\n", realAddr, remoteAddr)
 
 	proxyAgent, err := net.Dial("tcp", remoteAddr)
 	if err != nil {
-		panic(err)
+		logger.Warningf("Dial to %s failed: %s", remoteAddr, err)
 	}
-	fmt.Printf("succeed dial to %s\n", remoteAddr)
+	defer proxyAgent.Close()
+	logger.Infof("Connecting to $s", realAddr)
 
 	buf1 := make([]byte, 512)
 	buf2 := make([]byte, 512)
