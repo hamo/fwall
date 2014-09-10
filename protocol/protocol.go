@@ -1,10 +1,10 @@
 package protocol
 
 // Protocol:
-// +.....+-----+-----+-----+-----+-----+-----+-----+-----+
-// | IV  |          user name + random             | flag| encrypted by
-// |     |            56bits/7bytes                | 8bit|  Master Key
-// +.....+-----+-----+-----+-----+-----+-----+-----+-----+
+// +.....+-----+-----+-----+.....+-----+-----+-----+
+// | IV  | len |          username           | flag| encrypted by
+// |     |1Byte|                             | 8bit|  Master Key
+// +.....+-----+-----+-----+.....+-----+-----+-----+
 // IV is shared for both Master Key and User Password.
 
 // IPv4 request:                                             \
