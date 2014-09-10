@@ -6,22 +6,26 @@ package protocol
 // |              56bits/7bytes              | 8bit|  Master Key
 // +-----+-----+-----+-----+-----+-----+-----+-----+
 
-// IPv4 request:                                       \
-// +-----+-----+-----+-----+-----+-----+               |
-// |     IPv4 address      |port number|               |
-// |        4Bytes         |  2 bytes  |               |
-// +-----+-----+-----+-----+-----+-----+               |
-//                                                     |
-// IPv6 request:                                       |
-// +-----+-----+...........+-----+-----+-----+-----+   |
-// |           IPv6 address            |port number|   | encrypted by
-// |              16Bytes              |  2 bytes  |   | User Password
-// +-----+-----+...........+-----+-----+-----+-----+   |
-//                                                     |
-// Domain request:                                     |
-// +-----+-----+-----+...........+-----+-----+-----+   |
-// | len |            Domain name                  |   |
-// |1Byte|                                         |   |
-// +-----+-----+-----+...........+-----+-----+-----+   /
+// IPv4 request:                                             \
+// +-----+-----+-----+-----+-----+-----+-----+               |
+// |magic|      IPv4 address     |Port number|               |
+// |1Byte|         4Bytes        |  2 bytes  |               |
+// +-----+-----+-----+-----+-----+-----+-----+               |
+//                                                           |
+// IPv6 request:                                             |
+// +-----+-----+-----+...........+-----+-----+-----+-----+   |
+// |magic|              IPv6 address         |port number|   | encrypted by
+// |1Byte|                 16Bytes           | 2 bytes   |   | User Password
+// +-----+-----+-----+...........+-----+-----+-----+-----+   |
+//                                                           |
+// Domain request:                                           |
+// +-----+-----+-----+-----+...........+-----+-----+-----+   |
+// |magic| len |             Domain name                 |   |
+// |1Byte|1Byte|                                         |   |
+// +-----+-----+-----+-----+...........+-----+-----+-----+   /
 
 // Request content. encrypted by User Password.
+
+const (
+	MagicByte = 0xDD
+)
