@@ -1,10 +1,19 @@
 package tunnel
 
-import (
-	"net"
-	"time"
-)
+import ()
 
-type tunnel interface {
-	pipe(from, to net.Conn, timeout time.Duration)
+type Reader interface {
+	// Read IV and Master header
+	ReadMaster(p []byte) (int, error)
+
+	// Read User data
+	ReadUser(p []byte) (int, error)
+}
+
+type Writer interface {
+	// Write IV and Master header
+	WriteMaster(p []byte) (n int, err error)
+
+	// Write User data
+	WriteUser(p []byte) (n int, err error)
 }
