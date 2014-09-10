@@ -1,8 +1,8 @@
 package protocol
 
-// Protocol: 
+// Protocol:
 // +-----+-----+-----+-----+-----+-----+-----+-----+
-// |           user name + random            | flag| encrypted by 
+// |           user name + random            | flag| encrypted by
 // |              56bits/7bytes              | 8bit|  Master Key
 // +-----+-----+-----+-----+-----+-----+-----+-----+
 
@@ -11,13 +11,13 @@ package protocol
 // |     IPv4 address      |port number|               |
 // |        4Bytes         |  2 bytes  |               |
 // +-----+-----+-----+-----+-----+-----+               |
-                                                       |
+//                                                     |
 // IPv6 request:                                       |
 // +-----+-----+...........+-----+-----+-----+-----+   |
 // |           IPv6 address            |port number|   | encrypted by
 // |              16Bytes              |  2 bytes  |   | User Password
 // +-----+-----+...........+-----+-----+-----+-----+   |
-                                                       |
+//                                                     |
 // Domain request:                                     |
 // +-----+-----+-----+...........+-----+-----+-----+   |
 // | len |            Domain name                  |   |
