@@ -30,6 +30,23 @@ func NewClient(username string, addressType byte, address []byte, port uint16, l
 }
 
 func (c *Client) Upstream(client net.Conn, server tunnel.Writer) {
+	l := len(c.username)
+	bl := byte(l & 0xFF)
+	nu := c.username[:bl]
+	if c.username != nu {
+		c.logger.Warningf("%s is too long. Trunc to %s", c.username, nu)
+	}
+	c.username = nu
+
+	mh := make([]byte, 1+bl)
+	mh[0] = bl
+	copy(mh[1:1+bl], c.username)
+
+	server.WriteMaster(mh)
+
+	uh := make([]byte, 1)
+	uh[0] = MagicByte
+
 	// FIXME: handle TCP/UDP flag
 	f := NewFlag()
 
@@ -42,23 +59,7 @@ func (c *Client) Upstream(client net.Conn, server tunnel.Writer) {
 		SetIPv6Flag(f)
 	}
 
-	l := len(c.username)
-	bl := byte(l & 0xFF)
-	nu := c.username[:bl]
-	if c.username != nu {
-		c.logger.Warningf("%s is too long. Trunc to %s", c.username, nu)
-	}
-	c.username = nu
-
-	mh := make([]byte, 1+bl+1)
-	mh[0] = bl
-	copy(mh[1:bl+1], c.username)
-	mh[bl+1] = *f
-
-	server.WriteMaster(mh)
-
-	uh := make([]byte, 1)
-	uh[0] = MagicByte
+	uh = append(uh, *f)
 
 	switch c.addressType {
 	case 0x01: //IPv4

@@ -1,29 +1,29 @@
 package protocol
 
 // Protocol:
-// +.....+-----+-----+-----+.....+-----+-----+-----+
-// | IV  | len |          username           | flag| encrypted by
-// |     |1Byte|                             | 8bit|  Master Key
-// +.....+-----+-----+-----+.....+-----+-----+-----+
+// +.....+-----+-----+-----+.....+-----+-----+
+// | IV  | len |          username           | encrypted by
+// |     |1Byte|                             |  Master Key
+// +.....+-----+-----+-----+.....+-----+-----+
 // IV is shared for both Master Key and User Password.
 
-// IPv4 request:                                             \
-// +-----+-----+-----+-----+-----+-----+-----+               |
-// |magic|      IPv4 address     |Port number|               |
-// |1Byte|         4Bytes        |  2 bytes  |               |
-// +-----+-----+-----+-----+-----+-----+-----+               |
-//                                                           |
-// IPv6 request:                                             |
-// +-----+-----+-----+...........+-----+-----+-----+-----+   |
-// |magic|              IPv6 address         |port number|   | encrypted by
-// |1Byte|                 16Bytes           | 2 bytes   |   | User Password
-// +-----+-----+-----+...........+-----+-----+-----+-----+   |
-//                                                           |
-// Domain request:                                           |
-// +-----+-----+-----+-----+...........+-----+-----+-----+   |
-// |magic| len |             Domain name                 |   |
-// |1Byte|1Byte|                                         |   |
-// +-----+-----+-----+-----+...........+-----+-----+-----+   /
+// IPv4 request:                                                   \
+// +-----+-----+-----+-----+-----+-----+-----+-----+               |
+// |magic| flag|      IPv4 address     |Port number|               |
+// |1Byte| 8bit|         4Bytes        |  2 bytes  |               |
+// +-----+-----+-----+-----+-----+-----+-----+-----+               |
+//                                                                 |
+// IPv6 request:                                                   |
+// +-----+-----+-----+-----+...........+-----+-----+-----+-----+   |
+// |magic| flag|           IPv6 address            |port number|   | encrypted by
+// |1Byte| 8bit|              16Bytes              | 2 bytes   |   | User Password
+// +-----+-----+-----+-----+...........+-----+-----+-----+-----+   |
+//                                                                 |
+// Domain request:                                                 |
+// +-----+-----+-----+-----+-----+...........+-----+-----+-----+   |
+// |magic| flag| len |            Domain name                  |   |
+// |1Byte| 8bit|1Byte|                                         |   |
+// +-----+-----+-----+-----+-----+...........+-----+-----+-----+   /
 
 // Request content. encrypted by User Password.
 
