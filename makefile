@@ -15,3 +15,6 @@ goget:
 
 test: all
 	GOPATH=$(GOPATH) go test ./...
+
+fmt:
+	go fmt ./...
