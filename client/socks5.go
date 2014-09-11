@@ -34,7 +34,7 @@ func handShake(c net.Conn) error {
 }
 
 // commandCode, addressType, address, port, err
-func parseReq(c net.Conn) (byte, byte, *bytes.Buffer, int16, error) {
+func parseReq(c net.Conn) (byte, byte, *bytes.Buffer, uint16, error) {
 	r := bufio.NewReader(c)
 
 	protoVersion, err := r.ReadByte()
@@ -85,7 +85,7 @@ func parseReq(c net.Conn) (byte, byte, *bytes.Buffer, int16, error) {
 		return 0, 0, nil, 0, fmt.Errorf("Address Type error")
 	}
 
-	var port int16
+	var port uint16
 	binary.Read(r, binary.BigEndian, &port)
 
 	// commandCode, addressType, address, port, err
