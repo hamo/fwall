@@ -34,7 +34,7 @@ func handShake(c net.Conn) error {
 }
 
 // commandCode, addressType, address, port, err
-func parseReq(c net.Conn) (byte, byte, *bytes.Buffer, uint16, error) {
+func parseReq(c net.Conn) (byte, byte, []byte, uint16, error) {
 	r := bufio.NewReader(c)
 
 	protoVersion, err := r.ReadByte()
@@ -71,7 +71,6 @@ func parseReq(c net.Conn) (byte, byte, *bytes.Buffer, uint16, error) {
 		}
 	case 0x03:
 		length, _ := r.ReadByte()
-		address.WriteByte(length)
 		for i := 0; i < int(length); i++ {
 			c, _ := r.ReadByte()
 			address.WriteByte(c)
@@ -89,5 +88,5 @@ func parseReq(c net.Conn) (byte, byte, *bytes.Buffer, uint16, error) {
 	binary.Read(r, binary.BigEndian, &port)
 
 	// commandCode, addressType, address, port, err
-	return commandCode, addressType, address, port, nil
+	return commandCode, addressType, address.Bytes(), port, nil
 }

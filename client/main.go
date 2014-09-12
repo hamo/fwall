@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"strconv"
+
+	"protocol"
+	"tunnel"
 
 	"github.com/hamo/golog"
 )
@@ -30,12 +32,6 @@ func init() {
 	flConfigFile = flag.String("c", "./config.json", "config file")
 }
 
-func fmtHeader(remoteAddr []byte) []byte {
-	lengthByte := []byte{byte(len(remoteAddr))}
-	fmtedHeader := append(lengthByte, remoteAddr...)
-	return fmtedHeader
-}
-
 func handleTCPConnection(c net.Conn) {
 	err := handShake(c)
 
@@ -56,45 +52,16 @@ func handleTCPConnection(c net.Conn) {
 
 	c.Write(reqAnswer)
 
-	// Move to server
-	//	realAddr := string(address)
-	var realAddr string
-	if addressType == 0x03 {
-		realAddr = string((address.Bytes()[1:]))
-	}
-
-	realAddr = realAddr + ":" + strconv.Itoa(int(port))
-	remoteAddr := fmt.Sprintf("%s:%d", lc.Server, lc.ServerPort)
-	fmtedHeader := fmtHeader([]byte(realAddr))
-
-	proxyAgent, err := net.Dial("tcp", remoteAddr)
+	proxyAgent, err := tunnel.RawSocketDial(lc.Server, lc.ServerPort)
 	if err != nil {
-		logger.Warningf("Dial to %s failed: %s", remoteAddr, err)
+		logger.Warningf("Dial to %s:%d failed: %s", lc.Server, lc.ServerPort, err)
 		return
 	}
 	defer proxyAgent.Close()
-	logger.Infof("Connecting to %s", realAddr)
 
-	buf1 := make([]byte, 512)
-	buf2 := make([]byte, 512)
-	go func() {
-		proxyAgent.Write([]byte(fmtedHeader))
-		for {
-			n, err := c.Read(buf1)
-			proxyAgent.Write(buf1[0:n])
-			if err != nil {
-				break
-			}
-		}
-	}()
-	for {
-		n, err := proxyAgent.Read(buf2)
-		c.Write(buf2[0:n])
-
-		if err != nil {
-			break
-		}
-	}
+	client := protocol.NewClient(lc.Username, addressType, address, port, logger)
+	go client.Upstream(c, proxyAgent)
+	client.Downstream(c, proxyAgent)
 
 	proxyAgent.Close()
 	c.Close()
