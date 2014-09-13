@@ -46,13 +46,13 @@ func NewAesStream (iv, key []byte) (*aesStream){
 	}
 }
 
-func (this *aesStream) encrpty (plaintext []byte) ([]byte) {
+func (this *aesStream) encrpt (plaintext []byte) ([]byte) {
 	ciphertext := make([]byte, len(plaintext))
 	this.enc.XORKeyStream(ciphertext, plaintext)
 	return ciphertext
 }
 
-func (this *aesStream) decrpty (ciphertext []byte) ([]byte) {
+func (this *aesStream) decrpt (ciphertext []byte) ([]byte) {
 	plaintext := make([]byte, len(ciphertext))
 	this.dec.XORKeyStream(plaintext, ciphertext)
 	return plaintext
