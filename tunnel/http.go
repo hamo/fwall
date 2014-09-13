@@ -5,11 +5,11 @@ import (
 	"strconv"
 )
 
-type RawSocket struct {
+type HttpTunnel struct {
 	c net.Conn
 }
 
-func RawSocketDial(addr string, port int) (*RawSocket, error) {
+func HttpTunnelDial(addr string, port int) (*HttpTunnel, error) {
 	t := addr + ":" + strconv.Itoa(int(port))
 
 	c, err := net.Dial("tcp", t)
@@ -17,33 +17,33 @@ func RawSocketDial(addr string, port int) (*RawSocket, error) {
 		return nil, err
 	}
 
-	return &RawSocket{
+	return &HttpTunnel{
 		c: c,
 	}, nil
 }
 
-func RawSocketAccept(c net.Conn) *RawSocket {
-	return &RawSocket{
+func HttpTunnelAccept(c net.Conn) *HttpTunnel {
+	return &HttpTunnel{
 		c: c,
 	}
 }
 
-func (r *RawSocket) Close() {
+func (r *HttpTunnel) Close() {
 	r.c.Close()
 }
 
-func (r *RawSocket) ReadMaster(buf []byte) (int, error) {
+func (r *HttpTunnel) ReadMaster(buf []byte) (int, error) {
 	return r.c.Read(buf)
 }
 
-func (r *RawSocket) ReadUser(buf []byte) (int, error) {
+func (r *HttpTunnel) ReadUser(buf []byte) (int, error) {
 	return r.c.Read(buf)
 }
 
-func (r *RawSocket) WriteMaster(buf []byte) (int, error) {
+func (r *HttpTunnel) WriteMaster(buf []byte) (int, error) {
 	return r.c.Write(buf)
 }
 
-func (r *RawSocket) WriteUser(buf []byte) (int, error) {
+func (r *HttpTunnel) WriteUser(buf []byte) (int, error) {
 	return r.c.Write(buf)
 }
