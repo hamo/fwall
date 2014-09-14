@@ -25,14 +25,14 @@ func NewServer(logger *golog.GoLogger) *Server {
 
 func (s *Server) Accept(local tunnel.Reader) string {
 	len := make([]byte, 1)
-	_, err := local.ReadMaster(len)
+	_, err := local.ReadMaster(len, true)
 	if err != nil {
 		// FIXME
 		return ""
 	}
 
 	u := make([]byte, len[0])
-	_, err = local.ReadMaster(u)
+	_, err = local.ReadMaster(u, true)
 	if err != nil {
 		// FIXME
 		return ""
@@ -45,24 +45,24 @@ func (s *Server) Accept(local tunnel.Reader) string {
 
 func (s *Server) ParseUserHeader(local tunnel.Reader) (UDPconnect bool, addrPort string, err error) {
 	magic := make([]byte, 1)
-	_, err = local.ReadUser(magic)
+	_, err = local.ReadUser(magic, true)
 
 	if magic[0] != MagicByte {
 		return false, "", fmt.Errorf("Can not decode correctly.")
 	}
 
 	f := make([]byte, 1)
-	_, err = local.ReadUser(f)
+	_, err = local.ReadUser(f, true)
 
 	UDP := CheckUDPFlag(f[0])
 
 	switch {
 	case CheckDomainFlag(f[0]):
 		dl := make([]byte, 1)
-		local.ReadUser(dl)
+		local.ReadUser(dl, true)
 
 		d := make([]byte, dl[0])
-		local.ReadUser(d)
+		local.ReadUser(d, true)
 
 		addrPort = addrPort + string(d)
 
@@ -77,7 +77,7 @@ func (s *Server) ParseUserHeader(local tunnel.Reader) (UDPconnect bool, addrPort
 	addrPort = addrPort + ":"
 
 	pb := make([]byte, 2)
-	_, err = local.ReadUser(pb)
+	_, err = local.ReadUser(pb, true)
 	p := binary.BigEndian.Uint16(pb)
 
 	addrPort = addrPort + strconv.Itoa(int(p))
@@ -89,7 +89,7 @@ func (s *Server) Upstream(local tunnel.Reader, remote net.Conn) {
 	// FIXME: configurable buffer size
 	buf := make([]byte, 256)
 	for {
-		n, err := local.ReadUser(buf)
+		n, err := local.ReadUser(buf, false)
 		remote.Write(buf[:n])
 		if err != nil {
 			break

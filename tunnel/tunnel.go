@@ -4,10 +4,10 @@ import ()
 
 type Reader interface {
 	// Read IV and Master header
-	ReadMaster(p []byte) (int, error)
+	ReadMaster(p []byte, full bool) (int, error)
 
 	// Read User data
-	ReadUser(p []byte) (int, error)
+	ReadUser(p []byte, full bool) (int, error)
 }
 
 type Writer interface {

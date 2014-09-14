@@ -96,7 +96,7 @@ func (c *Client) Downstream(client net.Conn, server tunnel.Reader) {
 	// FIXME: configurable buffer size
 	buf := make([]byte, 256)
 	for {
-		n, err := server.ReadUser(buf)
+		n, err := server.ReadUser(buf, false)
 		client.Write(buf[:n])
 		if err != nil {
 			break
