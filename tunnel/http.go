@@ -3,6 +3,7 @@ package tunnel
 import (
 	"net"
 	"strconv"
+	"io"
 )
 
 type HttpTunnel struct {
@@ -32,14 +33,21 @@ func (r *HttpTunnel) Close() {
 	r.c.Close()
 }
 
-func (r *HttpTunnel) ReadMaster(buf []byte) (int, error) {
-	return r.c.Read(buf)
+func (r *HttpTunnel) ReadMaster(buf []byte, full bool) (int, error) {
+	if full {
+		return io.ReadFull(r.c, buf)
+	} else {
+		return r.c.Read(buf)
+	}
 }
 
-func (r *HttpTunnel) ReadUser(buf []byte) (int, error) {
-	return r.c.Read(buf)
+func (r *HttpTunnel) ReadUser(buf []byte, full bool) (int, error) {
+	if full {
+		return io.ReadFull(r.c, buf)
+	} else {
+		return r.c.Read(buf)
+	}
 }
-
 func (r *HttpTunnel) WriteMaster(buf []byte) (int, error) {
 	return r.c.Write(buf)
 }

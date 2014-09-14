@@ -2,7 +2,7 @@
     "server":"128.199.153.182",
     "server_port":443,
     "master_key":"foobar",
-    "method":"aes-cfb",
+    "encrypt_method":"aes-cfb",
     "tunnel":"raw",
 
     "local_address":"127.0.0.1",

@@ -7,11 +7,11 @@ import (
 )
 
 type localConfig struct {
-	Server     string `json:"server"`
-	ServerPort int    `json:"server_port"`
-	MasterKey  string `json:"master_key"`
-	Method     string `json:"method"`
-	Tunnel     string `json:"tunnel"`
+	Server        string `json:"server"`
+	ServerPort    int    `json:"server_port"`
+	MasterKey     string `json:"master_key"`
+	EncryptMethod string `json:"encrypt_method"`
+	Tunnel        string `json:"tunnel"`
 
 	LocalAddress string `json:"local_address"`
 	LocalPort    int    `json:"local_port"`
@@ -62,7 +62,7 @@ func sanityCheckConfigFile(lc *localConfig) error {
 	}
 
 	// encryption method is required
-	if lc.Method == "" {
+	if lc.EncryptMethod == "" {
 		return fmt.Errorf("Encryption Method is required")
 	}
 

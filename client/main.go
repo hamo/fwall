@@ -52,7 +52,18 @@ func handleTCPConnection(c net.Conn) {
 
 	c.Write(reqAnswer)
 
-	proxyAgent, err := tunnel.RawSocketDial(lc.Server, lc.ServerPort)
+	// FIXME: switch will led a compile error.
+	// switch lc.Tunnel {
+	// case "Raw": 
+	// 	proxyAgent, err := tunnel.RawSocketDial(lc.Server, lc.ServerPort)
+	// case "Http":
+	// 	proxyAgent, err := tunnel.HttpTunnelDial(lc.Server, lc.ServerPort)
+	// default:
+	// 	logger.Warningf("Unsupported tunnel type: %s\n", lc.Tunnel)
+	// 	proxyAgent, err := tunnel.RawSocketDial(lc.Server, lc.ServerPort)
+	// }
+	proxyAgent, err := tunnel.HttpTunnelDial(lc.Server, lc.ServerPort)
+
 	if err != nil {
 		logger.Warningf("Dial to %s:%d failed: %s", lc.Server, lc.ServerPort, err)
 		return
