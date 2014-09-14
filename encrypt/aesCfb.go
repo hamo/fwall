@@ -4,20 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"fmt"
 )
-
-func test() {
-	const key = "1234567890123456"
-	iv := []byte(key)[:aes.BlockSize]
-	var msg = "message"
-
-	encrypted := make([]byte, len(msg))
-	block, _ := aes.NewCipher([]byte(key))
-	encryptStream := cipher.NewCFBEncrypter(block, iv)
-	encryptStream.XORKeyStream(encrypted, []byte(msg))
-	fmt.Printf("Encrypting %v %s -> %v\n", []byte(msg), msg, encrypted)
-}
 
 type aesStream struct {
 	enc cipher.Stream
