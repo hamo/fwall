@@ -60,7 +60,7 @@ func handleTCPConnection(c net.Conn) {
 
 	var proxyAgent tunnel.Agent
 	switch lc.Tunnel {
-	case "Raw": 
+	case "Raw":
 		proxyAgent, err = tunnel.RawSocketDial(lc.Server, lc.ServerPort)
 	case "Http":
 		proxyAgent, err = tunnel.HttpTunnelDial(lc.Server, lc.ServerPort)

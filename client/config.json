@@ -3,7 +3,7 @@
     "server_port":443,
     "master_key":"foobar",
     "encrypt_method":"aes-cfb",
-    "tunnel":"raw",
+    "tunnel":"Raw",
 
     "local_address":"127.0.0.1",
     "local_port":1081,
