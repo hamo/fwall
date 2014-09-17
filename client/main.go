@@ -53,6 +53,9 @@ func handleTCPConnection(c net.Conn) {
 	c.Write(reqAnswer)
 
 	// FIXME: switch will led a compile error.
+	// FIXME2: if we declare proxyAgent before switch the call we must set a
+	// unmodifiable type. That's why I hate strong typed language!!!
+	
 	// switch lc.Tunnel {
 	// case "Raw": 
 	// 	proxyAgent, err := tunnel.RawSocketDial(lc.Server, lc.ServerPort)
