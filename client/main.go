@@ -55,17 +55,19 @@ func handleTCPConnection(c net.Conn) {
 	// FIXME: switch will led a compile error.
 	// FIXME2: if we declare proxyAgent before switch the call we must set a
 	// unmodifiable type. That's why I hate strong typed language!!!
-	
-	// switch lc.Tunnel {
-	// case "Raw": 
-	// 	proxyAgent, err := tunnel.RawSocketDial(lc.Server, lc.ServerPort)
-	// case "Http":
-	// 	proxyAgent, err := tunnel.HttpTunnelDial(lc.Server, lc.ServerPort)
-	// default:
-	// 	logger.Warningf("Unsupported tunnel type: %s\n", lc.Tunnel)
-	// 	proxyAgent, err := tunnel.RawSocketDial(lc.Server, lc.ServerPort)
-	// }
-	proxyAgent, err := tunnel.HttpTunnelDial(lc.Server, lc.ServerPort)
+	// However if we create a new interface (no...), it must include as much
+	// functions as possible. E.g.: Close(), all the read/write functions.
+
+	var proxyAgent tunnel.Agent
+	switch lc.Tunnel {
+	case "Raw": 
+		proxyAgent, err = tunnel.RawSocketDial(lc.Server, lc.ServerPort)
+	case "Http":
+		proxyAgent, err = tunnel.HttpTunnelDial(lc.Server, lc.ServerPort)
+	default:
+		logger.Warningf("Unsupported tunnel type: %s\n", lc.Tunnel)
+		proxyAgent, err = tunnel.RawSocketDial(lc.Server, lc.ServerPort)
+	}
 
 	if err != nil {
 		logger.Warningf("Dial to %s:%d failed: %s", lc.Server, lc.ServerPort, err)
