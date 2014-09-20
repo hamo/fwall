@@ -2,8 +2,8 @@ package protocol
 
 import (
 	"encoding/binary"
-	"net"
 
+	"net"
 	"tunnel"
 
 	"github.com/hamo/golog"

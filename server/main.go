@@ -13,7 +13,7 @@ const (
 )
 
 func handleConnection(c net.Conn) {
-	r := tunnel.RawSocketAccept(c)
+	r := tunnel.HttpTunnelAccept(c)
 
 	s := protocol.NewServer(nil)
 

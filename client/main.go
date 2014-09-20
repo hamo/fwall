@@ -65,7 +65,7 @@ func handleTCPConnection(c net.Conn) {
 	case "Http":
 		proxyAgent, err = tunnel.HttpTunnelDial(lc.Server, lc.ServerPort)
 	default:
-		logger.Warningf("Unsupported tunnel type: %s\n", lc.Tunnel)
+		logger.Warningf("Unsupported tunnel type: %s\nUsing Raw as default", lc.Tunnel)
 		proxyAgent, err = tunnel.RawSocketDial(lc.Server, lc.ServerPort)
 	}
 

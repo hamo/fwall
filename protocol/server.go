@@ -28,6 +28,7 @@ func (s *Server) Accept(local tunnel.Reader) string {
 	_, err := local.ReadMaster(len, true)
 	if err != nil {
 		// FIXME
+		fmt.Printf("1")
 		return ""
 	}
 
@@ -35,6 +36,7 @@ func (s *Server) Accept(local tunnel.Reader) string {
 	_, err = local.ReadMaster(u, true)
 	if err != nil {
 		// FIXME
+		fmt.Printf("2")
 		return ""
 	}
 	s.username = string(u)

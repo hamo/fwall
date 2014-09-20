@@ -12,7 +12,7 @@ type aesStream struct {
 }
 
 /* a bit complex && redundancy due to I copy it form a random-string generator */
-func genRandIv(n int) []byte {
+func GenRandIv(n int) []byte {
 	const alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	var bytes = make([]byte, n)
 	rand.Read(bytes)
@@ -23,8 +23,8 @@ func genRandIv(n int) []byte {
 }
 
 func NewAesStream(iv, key []byte) *aesStream {
-	iv = genRandIv(32)
-	block, _ := aes.NewCipher([]byte(key))
+	// iv = GenRandIv(32)
+	block, _ := aes.NewCipher(key)
 	encryptStream := cipher.NewCFBEncrypter(block, iv)
 	decryptStream := cipher.NewCFBDecrypter(block, iv)
 	return &aesStream{
@@ -33,13 +33,13 @@ func NewAesStream(iv, key []byte) *aesStream {
 	}
 }
 
-func (this *aesStream) encrpt(plaintext []byte) []byte {
+func (this *aesStream) Encrypt(plaintext []byte) []byte {
 	ciphertext := make([]byte, len(plaintext))
 	this.enc.XORKeyStream(ciphertext, plaintext)
 	return ciphertext
 }
 
-func (this *aesStream) decrpt(ciphertext []byte) []byte {
+func (this *aesStream) Decrypt(ciphertext []byte) []byte {
 	plaintext := make([]byte, len(ciphertext))
 	this.dec.XORKeyStream(plaintext, ciphertext)
 	return plaintext
