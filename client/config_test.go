@@ -9,7 +9,7 @@ var testConf string = `
     "server":"example.com",
     "server_port":443,
     "master_key":"foobar",
-    "encrypt_method":"aes-cfb",
+    "encrypt_method":"aes-256-cfb",
     "tunnel":"Raw",
 
     "local_address":"127.0.0.1",
@@ -33,7 +33,7 @@ func Test_doParseConfigFile(t *testing.T) {
 		t.Errorf("server_port wrong: %d", cf.ServerPort)
 	}
 
-	if cf.EncryptMethod != "aes-cfb" {
+	if cf.EncryptMethod != "aes-256-cfb" {
 		t.Errorf("method wrong: %s", cf.EncryptMethod)
 	}
 }
