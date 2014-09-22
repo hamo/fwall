@@ -17,12 +17,3 @@ type Writer interface {
 	// Write User data
 	WriteUser(p []byte) (n int, err error)
 }
-
-type Agent interface {
-	ReadMaster(p []byte, full bool) (int, error)
-	ReadUser(p []byte, full bool) (int, error)
-	WriteMaster(p []byte) (n int, err error)
-	WriteUser(p []byte) (n int, err error)
-
-	Close()
-}

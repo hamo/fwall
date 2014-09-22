@@ -3,9 +3,12 @@ package main
 import (
 	"fmt"
 	"net"
+	"os"
 
 	"protocol"
 	"tunnel"
+
+	"github.com/hamo/golog"
 )
 
 const (
@@ -13,13 +16,22 @@ const (
 )
 
 func handleConnection(c net.Conn) {
-	r := tunnel.HttpTunnelAccept(c)
+	logger := golog.New(os.Stdout)
+	logger.SetDebug(true)
+
+	r, err := tunnel.NewRawSocket("", 443, "server", "foobar", "aes-256-cfb", "barfoo", logger)
+
+	r.Accept(c)
 
 	s := protocol.NewServer(nil)
 
 	_ = s.Accept(r)
 
 	_, addrPort, err := s.ParseUserHeader(r)
+	if err != nil {
+		logger.Errorf("ParseUserHeader failed: %v", err)
+		return
+	}
 
 	realServer, err := net.Dial("tcp", addrPort)
 
@@ -29,7 +41,6 @@ func handleConnection(c net.Conn) {
 	}
 
 	go s.Upstream(r, realServer)
-
 	s.Downstream(r, realServer)
 
 	realServer.Close()

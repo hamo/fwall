@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/sha512"
 )
 
 type aesStream struct {
@@ -11,19 +12,34 @@ type aesStream struct {
 	dec cipher.Stream
 }
 
-/* a bit complex && redundancy due to I copy it form a random-string generator */
-func GenRandIv(n int) []byte {
-	const alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-	var bytes = make([]byte, n)
-	rand.Read(bytes)
-	for i, b := range bytes {
-		bytes[i] = alphanum[b%byte(len(alphanum))]
-	}
-	return bytes
+var aesCfb256 CryptoInfo = CryptoInfo{
+	IVlen:  16,
+	GenIV:  aesGenRandIv(16),
+	GenKey: aesGenKey(16),
+
+	NewCrypto: NewAesStream,
 }
 
-func NewAesStream(iv, key []byte) *aesStream {
-	// iv = GenRandIv(32)
+func init() {
+	CryptoTable["aes-256-cfb"] = &aesCfb256
+}
+
+func aesGenRandIv(n int) func() []byte {
+	return func() []byte {
+		bytes := make([]byte, n)
+		rand.Read(bytes)
+		return bytes
+	}
+}
+
+func aesGenKey(n int) func(string) []byte {
+	return func(passwd string) []byte {
+		s := sha512.Sum512([]byte(passwd))
+		return s[:n]
+	}
+}
+
+func NewAesStream(iv, key []byte) Encryption {
 	block, _ := aes.NewCipher(key)
 	encryptStream := cipher.NewCFBEncrypter(block, iv)
 	decryptStream := cipher.NewCFBDecrypter(block, iv)
