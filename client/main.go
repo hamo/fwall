@@ -36,7 +36,7 @@ func handleTCPConnection(c net.Conn) {
 	err := handShake(c)
 
 	if err != nil {
-		logger.Debugf(*flDebug, "handShake err: %s", err)
+		logger.Debugf("handShake err: %s", err)
 		c.Close()
 		return
 	}
@@ -46,9 +46,9 @@ func handleTCPConnection(c net.Conn) {
 		logger.Fatalf("parseReq failed: %s", err)
 	}
 
-	logger.Debugf(*flDebug, "commandCode: %d\n", commandCode)
-	logger.Debugf(*flDebug, "addressType: %d\n", addressType)
-	logger.Debugf(*flDebug, "port: %d\n", port)
+	logger.Debugf("commandCode: %d\n", commandCode)
+	logger.Debugf("addressType: %d\n", addressType)
+	logger.Debugf("port: %d\n", port)
 
 	c.Write(reqAnswer)
 
@@ -91,6 +91,8 @@ func main() {
 
 	flag.Parse()
 
+	logger.SetDebug(*flDebug)
+
 	lc, err = parseConfigFile(*flConfigFile)
 	if err != nil {
 		logger.Fatalf("Parse config file err: %s", err)
@@ -107,7 +109,7 @@ func main() {
 	for {
 		connTCP, err := lnTCP.Accept()
 		if err != nil {
-			logger.Debugf(*flDebug, "Accept return err: %s", err)
+			logger.Debugf("Accept return err: %s", err)
 			continue
 		}
 
