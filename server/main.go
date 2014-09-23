@@ -1,35 +1,56 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net"
 	"os"
 
 	"protocol"
 	"tunnel"
+	"userdb"
 
 	"github.com/hamo/golog"
 )
 
-const (
-	port = ":443"
+var (
+	sc  *serverConfig
+	udb *userdb.UserDB
 )
 
-func handleConnection(c net.Conn) {
-	logger := golog.New(os.Stdout)
-	logger.SetDebug(true)
+var (
+	flDebug      *bool
+	flConfigFile *string
 
-	r, err := tunnel.NewRawSocket("", 443, "server", "foobar", "aes-256-cfb", "barfoo", logger)
+	logger *golog.GoLogger
+)
+
+func init() {
+	flDebug = flag.Bool("d", false, "debug switch")
+	flConfigFile = flag.String("c", "./config.json", "config file")
+}
+
+func handleConnection(c net.Conn) {
+	// FIXME
+	r, err := tunnel.NewRawSocket("", 443, "server", "foobar", "aes-256-cfb", "", logger)
 
 	r.Accept(c)
 
 	s := protocol.NewServer(nil)
 
-	_ = s.Accept(r)
+	user := s.Accept(r)
+	ui, ok := udb.GetUserInfo(user)
+	if !ok {
+		c.Close()
+		return
+	}
+
+	r.SetPassword(ui.Password)
 
 	_, addrPort, err := s.ParseUserHeader(r)
 	if err != nil {
 		logger.Errorf("ParseUserHeader failed: %v", err)
+		c.Close()
 		return
 	}
 
@@ -48,7 +69,28 @@ func handleConnection(c net.Conn) {
 }
 
 func main() {
-	lnTCP, err := net.Listen("tcp", port)
+	var err error
+
+	// FIXME: configurable logger file
+	logger = golog.New(os.Stdout)
+
+	flag.Parse()
+
+	logger.SetDebug(*flDebug)
+
+	sc, err = parseConfigFile(*flConfigFile)
+	if err != nil {
+		logger.Fatalf("Parse config file err: %s", err)
+	}
+
+	udb, err = userdb.New(sc.UserDB)
+	if err != nil {
+		logger.Fatalln(err)
+	}
+
+	udb.SyncFromDB()
+
+	lnTCP, err := net.Listen("tcp", fmt.Sprintf("%s:%d", sc.ListenAddr, sc.ListenPort))
 	if err != nil {
 		panic(err)
 	}

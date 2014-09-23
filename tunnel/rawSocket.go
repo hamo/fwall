@@ -62,6 +62,11 @@ func (r *RawSocket) Close() {
 	r.c.Close()
 }
 
+//FIXME
+func (r *RawSocket) SetPassword(passwd string) {
+	r.password = r.crypto.GenKey(passwd)
+}
+
 func (r *RawSocket) ReadMaster(buf []byte, full bool) (int, error) {
 	if r.side == "client" {
 		panic("client call readMaster")

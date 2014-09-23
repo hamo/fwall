@@ -1,0 +1,10 @@
+{
+    "listen_addr":"",
+    "listen_port":443,
+
+    "master_key":"foobar",
+    "encrypt_method":"aes-256-cfb",
+    "tunnel":"Raw",
+
+    "userDB":"file://./user.db"
+}
