@@ -31,8 +31,10 @@ func init() {
 }
 
 func handleConnection(c net.Conn) {
-	// FIXME
-	r, err := tunnel.NewRawSocketServer("foobar", "aes-256-cfb", logger)
+	r, err := tunnel.NewRawSocketServer(sc.MasterKey, sc.EncryptMethod, logger)
+	if err != nil {
+		logger.Fatalf("Create tunnel failed: %s", err)
+	}
 
 	r.Accept(c)
 
