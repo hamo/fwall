@@ -42,6 +42,7 @@ func New(dbpath string) (*UserDB, error) {
 }
 
 func (db *UserDB) SyncFromDB() error {
+	// FIXME: What should do when removing a user
 	db.DBLock.Lock()
 	defer db.DBLock.Unlock()
 
