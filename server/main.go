@@ -32,7 +32,7 @@ func init() {
 
 func handleConnection(c net.Conn) {
 	// FIXME
-	r, err := tunnel.NewRawSocket("", 443, "server", "foobar", "aes-256-cfb", "", logger)
+	r, err := tunnel.NewRawSocketServer("foobar", "aes-256-cfb", logger)
 
 	r.Accept(c)
 
