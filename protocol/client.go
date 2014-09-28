@@ -5,6 +5,7 @@ import (
 
 	"net"
 	"tunnel"
+	"compression"
 
 	"github.com/hamo/golog"
 )
@@ -81,7 +82,7 @@ func (c *Client) Upstream(client net.Conn, server tunnel.Writer) {
 	server.WriteUser(uh)
 
 	// FIXME: configurable buffer size
-	buf := make([]byte, 256)
+	buf := make([]byte, compression.BufferSize)
 
 	for {
 		n, err := client.Read(buf)
@@ -94,7 +95,7 @@ func (c *Client) Upstream(client net.Conn, server tunnel.Writer) {
 
 func (c *Client) Downstream(client net.Conn, server tunnel.Reader) {
 	// FIXME: configurable buffer size
-	buf := make([]byte, 256)
+	buf := make([]byte, compression.BufferSize)
 	for {
 		n, err := server.ReadUser(buf, false)
 		client.Write(buf[:n])
