@@ -89,7 +89,6 @@ func (s *Server) ParseUserHeader(local tunnel.Reader) (UDPconnect bool, addrPort
 }
 
 func (s *Server) Upstream(local tunnel.Reader, remote net.Conn) {
-	// FIXME: configurable buffer size
 	buf := make([]byte, compression.BufferSize)
 	for {
 		n, err := local.ReadUser(buf, false)
@@ -101,7 +100,6 @@ func (s *Server) Upstream(local tunnel.Reader, remote net.Conn) {
 }
 
 func (s *Server) Downstream(local tunnel.Writer, remote net.Conn) {
-	// FIXME: configurable buffer size
 	buf := make([]byte, compression.BufferSize)
 	for {
 		n, err := remote.Read(buf)

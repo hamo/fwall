@@ -81,7 +81,6 @@ func (c *Client) Upstream(client net.Conn, server tunnel.Writer) {
 
 	server.WriteUser(uh)
 
-	// FIXME: configurable buffer size
 	buf := make([]byte, compression.BufferSize)
 
 	for {
@@ -94,7 +93,6 @@ func (c *Client) Upstream(client net.Conn, server tunnel.Writer) {
 }
 
 func (c *Client) Downstream(client net.Conn, server tunnel.Reader) {
-	// FIXME: configurable buffer size
 	buf := make([]byte, compression.BufferSize)
 	for {
 		n, err := server.ReadUser(buf, false)
