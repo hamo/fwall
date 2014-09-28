@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"tunnel"
+	"compression"
 
 	"github.com/hamo/golog"
 )
@@ -89,7 +90,7 @@ func (s *Server) ParseUserHeader(local tunnel.Reader) (UDPconnect bool, addrPort
 
 func (s *Server) Upstream(local tunnel.Reader, remote net.Conn) {
 	// FIXME: configurable buffer size
-	buf := make([]byte, 256)
+	buf := make([]byte, compression.BufferSize)
 	for {
 		n, err := local.ReadUser(buf, false)
 		remote.Write(buf[:n])
@@ -101,7 +102,7 @@ func (s *Server) Upstream(local tunnel.Reader, remote net.Conn) {
 
 func (s *Server) Downstream(local tunnel.Writer, remote net.Conn) {
 	// FIXME: configurable buffer size
-	buf := make([]byte, 256)
+	buf := make([]byte, compression.BufferSize)
 	for {
 		n, err := remote.Read(buf)
 		local.WriteUser(buf[0:n])
