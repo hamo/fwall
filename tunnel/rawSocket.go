@@ -109,8 +109,11 @@ func (r *RawSocketServer) ReadMaster(buf []byte, full bool) (int, error) {
 	if r.masterEncrypt == nil {
 		// First call readMaster, so get IV first
 		iv := make([]byte, r.crypto.IVlen)
-		// FIXME: check err
-		_, err := io.ReadFull(r.c, iv)
+		n, err := io.ReadFull(r.c, iv)
+		if err != nil {
+			close(r.ivReady)
+			return n, err
+		}
 		r.logger.Debugf("get IV: %v, err : %v", iv, err)
 		r.iv = iv
 		close(r.ivReady)
