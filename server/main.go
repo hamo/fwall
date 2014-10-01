@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"runtime"
 
 	"protocol"
 	"tunnel"
@@ -79,6 +80,9 @@ func main() {
 	flag.Parse()
 
 	logger.SetDebug(*flDebug)
+
+	// FIXME: configurable threads
+	runtime.GOMAXPROCS(9)
 
 	sc, err = parseConfigFile(*flConfigFile)
 	if err != nil {
