@@ -91,7 +91,7 @@ func (s *Server) ParseUserHeader(local tunnel.Reader) (UDPconnect bool, addrPort
 func (s *Server) Upstream(local tunnel.Reader, remote net.Conn) {
 	buf := make([]byte, compression.BufferSize)
 	for {
-		n, err := local.ReadUser(buf, false)
+		n, err := local.ReadContent(buf)
 		remote.Write(buf[:n])
 		if err != nil {
 			break
@@ -103,7 +103,7 @@ func (s *Server) Downstream(local tunnel.Writer, remote net.Conn) {
 	buf := make([]byte, compression.BufferSize)
 	for {
 		n, err := remote.Read(buf)
-		local.WriteUser(buf[0:n])
+		local.WriteContent(buf[0:n])
 		if err != nil {
 			break
 		}
