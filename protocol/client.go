@@ -85,7 +85,7 @@ func (c *Client) Upstream(client net.Conn, server tunnel.Writer) {
 
 	for {
 		n, err := client.Read(buf)
-		server.WriteUser(buf[:n])
+		server.WriteContent(buf[:n])
 		if err != nil {
 			break
 		}
@@ -95,7 +95,7 @@ func (c *Client) Upstream(client net.Conn, server tunnel.Writer) {
 func (c *Client) Downstream(client net.Conn, server tunnel.Reader) {
 	buf := make([]byte, compression.BufferSize)
 	for {
-		n, err := server.ReadUser(buf, false)
+		n, err := server.ReadContent(buf)
 		client.Write(buf[:n])
 		if err != nil {
 			break

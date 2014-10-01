@@ -181,6 +181,43 @@ func (r *RawSocketServer) ReadUser(buf []byte, full bool) (int, error) {
 	return n, err
 }
 
+func (r *RawSocketClient) ReadContent(buf []byte) (int, error) {
+	if r.userEncryptR == nil {
+		// call readuser from client, wait for iv ready
+		<-r.ivReady
+		r.userEncryptR = r.crypto.NewCrypto(r.iv, r.password)
+	}
+
+	ciphertext := make([]byte, len(buf))
+	var n int
+	var err error
+
+	n, err = r.c.Read(ciphertext)
+
+	plaintext := r.userEncryptR.Decrypt(ciphertext[:n])
+
+	copy(buf[:n], plaintext[:n])
+	return n, err
+}
+
+func (r *RawSocketServer) ReadContent(buf []byte) (int, error) {
+	// call after ParseUserHeader
+	if r.userEncryptR == nil {
+		r.userEncryptR = r.crypto.NewCrypto(r.iv, r.password)
+	}
+
+	ciphertext := make([]byte, len(buf))
+	var n int
+	var err error
+
+	n, err = r.c.Read(ciphertext)
+
+	plaintext := r.userEncryptR.Decrypt(ciphertext[:n])
+
+	copy(buf[:n], plaintext[:n])
+	return n, err
+}
+
 func (r *RawSocketClient) WriteMaster(buf []byte) (int, error) {
 	if r.masterEncrypt == nil {
 		// first time to write master
@@ -210,6 +247,27 @@ func (r *RawSocketClient) WriteUser(buf []byte) (int, error) {
 }
 
 func (r *RawSocketServer) WriteUser(buf []byte) (int, error) {
+	if r.userEncryptW == nil {
+		<-r.ivReady
+		r.userEncryptW = r.crypto.NewCrypto(r.iv, r.password)
+	}
+
+	ciphertext := r.userEncryptW.Encrypt(buf)
+
+	return r.c.Write(ciphertext)
+}
+
+func (r *RawSocketClient) WriteContent(buf []byte) (int, error) {
+	if r.userEncryptW == nil {
+		r.userEncryptW = r.crypto.NewCrypto(r.iv, r.password)
+	}
+
+	ciphertext := r.userEncryptW.Encrypt(buf)
+
+	return r.c.Write(ciphertext)
+}
+
+func (r *RawSocketServer) WriteContent(buf []byte) (int, error) {
 	if r.userEncryptW == nil {
 		<-r.ivReady
 		r.userEncryptW = r.crypto.NewCrypto(r.iv, r.password)

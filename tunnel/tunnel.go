@@ -8,6 +8,9 @@ type Reader interface {
 
 	// Read User data
 	ReadUser(p []byte, full bool) (int, error)
+
+	// Read Content data
+	ReadContent(p []byte) (int, error)
 }
 
 type Writer interface {
@@ -16,4 +19,7 @@ type Writer interface {
 
 	// Write User data
 	WriteUser(p []byte) (n int, err error)
+
+	// Write Content data
+	WriteContent(p []byte) (n int, err error)
 }
