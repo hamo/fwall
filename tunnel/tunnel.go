@@ -57,6 +57,8 @@ type ProxyAgent interface {
 
 func NewClient(clientType string, addr string, port int, masterKey string, encryptMethod string, password string, logger *golog.GoLogger) (ProxyAgent, error) {
 	switch clientType {
+	case "lz4":
+		return NewLZ4SocketClient(addr, port, masterKey, encryptMethod, password, logger)
 	default:
 		return NewRawSocketClient(addr, port, masterKey, encryptMethod, password, logger)
 	}
@@ -64,6 +66,8 @@ func NewClient(clientType string, addr string, port int, masterKey string, encry
 
 func NewServer(serverType string, masterKey string, encryptMethod string, logger *golog.GoLogger) (ProxyAgent, error) {
 	switch serverType {
+	case "lz4":
+		return NewLZ4SocketServer(masterKey, encryptMethod, logger)
 	default:
 		return NewRawSocketServer(masterKey, encryptMethod, logger)
 	}
