@@ -6,7 +6,7 @@ type Reader interface {
 	// Read IV and Master header
 	ReadMaster(p []byte, full bool) (int, error)
 
-	// Read User data
+	// Read User header
 	ReadUser(p []byte, full bool) (int, error)
 
 	// Read Content data
@@ -17,7 +17,7 @@ type Writer interface {
 	// Write IV and Master header
 	WriteMaster(p []byte) (n int, err error)
 
-	// Write User data
+	// Write User header
 	WriteUser(p []byte) (n int, err error)
 
 	// Write Content data
