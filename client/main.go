@@ -52,7 +52,7 @@ func handleTCPConnection(c net.Conn) {
 
 	c.Write(reqAnswer)
 
-	proxyAgent, err := tunnel.NewRawSocketClient(lc.Server, lc.ServerPort, lc.MasterKey, lc.EncryptMethod, lc.Password, logger)
+	proxyAgent, err := tunnel.NewClient(lc.Tunnel, lc.Server, lc.ServerPort, lc.MasterKey, lc.EncryptMethod, lc.Password, logger)
 	if err != nil {
 		logger.Fatalf("Create tunnel failed: %s", err)
 	}

@@ -84,6 +84,14 @@ func (r *RawSocketClient) Dial() error {
 	return err
 }
 
+func (r *RawSocketServer) Dial() error {
+	panic("server call Dial")
+}
+
+func (r *RawSocketClient) Accept(c net.Conn) {
+	panic("client call Accept")
+}
+
 func (r *RawSocketServer) Accept(c net.Conn) {
 	r.c = c
 }
@@ -94,6 +102,9 @@ func (r *RawSocketClient) Close() {
 
 func (r *RawSocketServer) Close() {
 	r.c.Close()
+}
+
+func (r *RawSocketClient) SetPassword(passwd string) {
 }
 
 //FIXME

@@ -32,7 +32,7 @@ func init() {
 }
 
 func handleConnection(c net.Conn) {
-	r, err := tunnel.NewRawSocketServer(sc.MasterKey, sc.EncryptMethod, logger)
+	r, err := tunnel.NewServer(sc.Tunnel, sc.MasterKey, sc.EncryptMethod, logger)
 	if err != nil {
 		logger.Fatalf("Create tunnel failed: %s", err)
 	}
