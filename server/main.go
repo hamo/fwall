@@ -60,7 +60,7 @@ func handleConnection(c net.Conn) {
 	realServer, err := net.Dial("tcp", addrPort)
 
 	if err != nil {
-		fmt.Printf("err: %s", err)
+		logger.Errorf("err: %s", err)
 		return
 	}
 
