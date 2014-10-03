@@ -59,6 +59,8 @@ func NewClient(clientType string, addr string, port int, masterKey string, encry
 	switch clientType {
 	case "lz4":
 		return NewLZ4SocketClient(addr, port, masterKey, encryptMethod, password, logger)
+	case "plain":
+		return NewPlainTunnelClient(addr, port, masterKey, encryptMethod, password, logger)
 	default:
 		return NewRawSocketClient(addr, port, masterKey, encryptMethod, password, logger)
 	}
@@ -68,6 +70,8 @@ func NewServer(serverType string, masterKey string, encryptMethod string, logger
 	switch serverType {
 	case "lz4":
 		return NewLZ4SocketServer(masterKey, encryptMethod, logger)
+	case "plain":
+		return NewPlainTunnelServer(masterKey, encryptMethod, logger)
 	default:
 		return NewRawSocketServer(masterKey, encryptMethod, logger)
 	}
