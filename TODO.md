@@ -5,6 +5,7 @@
 
 ** encrypt **
 + implement none encrypt method
+  - Done.
 
 ** protocol **
 + support UDP protocol
