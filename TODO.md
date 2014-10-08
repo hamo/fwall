@@ -10,6 +10,7 @@
 ** protocol **
 + support UDP protocol
 + pass userdb into protocol-server
++ Move write/read master/user to protocol since we would have a fixed way to encrypt header
 
 ** server **
 + support UDP protocol
