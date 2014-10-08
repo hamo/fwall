@@ -81,8 +81,7 @@ func main() {
 
 	logger.SetDebug(*flDebug)
 
-	// FIXME: configurable threads
-	runtime.GOMAXPROCS(9)
+	runtime.GOMAXPROCS(runtime.NumCPU() + 1)
 
 	sc, err = parseConfigFile(*flConfigFile)
 	if err != nil {
