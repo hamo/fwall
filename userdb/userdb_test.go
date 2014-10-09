@@ -4,11 +4,11 @@ import (
 	"testing"
 )
 
-var db *UserDB
+var db DB
 
 func Test_NewFileDB(t *testing.T) {
 	var err error
-	db, err = New("file://./test.db")
+	db, err = NewDB("file://./test.db")
 	if err != nil {
 		t.Errorf("new db failed: %s", err)
 	}

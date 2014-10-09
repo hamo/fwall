@@ -16,7 +16,7 @@ import (
 
 var (
 	sc  *serverConfig
-	udb *userdb.UserDB
+	udb userdb.DB
 )
 
 var (
@@ -88,7 +88,7 @@ func main() {
 		logger.Fatalf("Parse config file err: %s", err)
 	}
 
-	udb, err = userdb.New(sc.UserDB)
+	udb, err = userdb.NewDB(sc.UserDB)
 	if err != nil {
 		logger.Fatalln(err)
 	}
