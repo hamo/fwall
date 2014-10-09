@@ -1,0 +1,27 @@
+* fwall
+** Intro
+Fwall is a [Bi~~~] tool for [Bi~~~].
+** Installation
+- git clone https://github.com/hamo/fwall.git
+- cd fwall && make
+*** server side
+- copy fwall/server/{server, config.json, user.db} to your server
+- modify the config.json and user.db
+- nohup server -c config.json &
+- Ctrl-d
+*** client side
+- modify the config.json
+- nohup client -c config.json &
+** what we support
+*** tunnel
+**** plain
+- tunnel plain will simply transmit your content without any modification.
+- WARNING: it's not safe! Avoid using it unless you know what problems you will meet.
+**** lz4
+- tunnel lz4 will compress all contents. "lz4" is a great compression algorithm which has a amazing compression speed. As some of you already guessed, our tunnel lz4 using "lz4".  :-)
+- use it if you don't care security issues.
+**** Raw
+- tunnel raw will encrypt your contents with aes-256-cfb.
+- choose this one if you have persecution mania  :-/
+** want a free account?
+I have the plan. But not sure when I can provide it.
