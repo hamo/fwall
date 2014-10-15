@@ -1,5 +1,6 @@
 ** client **
 + support UDP protocol
++ support blacklist and whitelist
 
 ** compression **
 
