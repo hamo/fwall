@@ -61,6 +61,7 @@ func handleConnection(c net.Conn) {
 
 	if err != nil {
 		logger.Errorf("err: %s", err)
+		c.Close()
 		return
 	}
 
