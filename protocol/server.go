@@ -6,8 +6,8 @@ import (
 	"net"
 	"strconv"
 
-	"tunnel"
 	"compression"
+	"tunnel"
 
 	"github.com/hamo/golog"
 )
@@ -70,8 +70,10 @@ func (s *Server) ParseUserHeader(local tunnel.Reader) (UDPconnect bool, addrPort
 		addrPort = addrPort + string(d)
 
 	case CheckIPv4Flag(f[0]):
-		// FIXME
-		fallthrough
+		v4 := make([]byte, 4)
+		local.ReadUser(v4, true)
+		addrPort = addrPort + net.IP(v4).String()
+
 	case CheckIPv6Flag(f[0]):
 		// FIXME
 		return false, "", fmt.Errorf("Not implemented")
