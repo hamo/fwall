@@ -75,8 +75,9 @@ func (s *Server) ParseUserHeader(local tunnel.Reader) (UDPconnect bool, addrPort
 		addrPort = addrPort + net.IP(v4).String()
 
 	case CheckIPv6Flag(f[0]):
-		// FIXME
-		return false, "", fmt.Errorf("Not implemented")
+		v6 := make([]byte, 16)
+		local.ReadUser(v6, true)
+		addrPort = "[" + net.IP(v6).String() + "]"
 	}
 
 	addrPort = addrPort + ":"
