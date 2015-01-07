@@ -34,16 +34,16 @@ func init() {
 
 func handleTCPConnection(c net.Conn) {
 	err := handShake(c)
-
+	defer c.Close()
 	if err != nil {
 		logger.Debugf("handShake err: %s", err)
-		c.Close()
 		return
 	}
 
 	commandCode, addressType, address, port, err := parseReq(c)
 	if err != nil {
-		logger.Fatalf("parseReq failed: %s", err)
+		logger.Warningf("parseReq failed: %s", err)
+		return
 	}
 
 	logger.Debugf("commandCode: %d\n", commandCode)
@@ -54,7 +54,8 @@ func handleTCPConnection(c net.Conn) {
 
 	proxyAgent, err := tunnel.NewClient(lc.Tunnel, lc.Server, lc.ServerPort, lc.MasterKey, lc.EncryptMethod, lc.Password, logger)
 	if err != nil {
-		logger.Fatalf("Create tunnel failed: %s", err)
+		logger.Warningf("Create tunnel failed: %s", err)
+		return
 	}
 
 	err = proxyAgent.Dial()
@@ -67,9 +68,6 @@ func handleTCPConnection(c net.Conn) {
 	client := protocol.NewClient(lc.Username, addressType, address, port, logger)
 	go client.Upstream(c, proxyAgent)
 	client.Downstream(c, proxyAgent)
-
-	proxyAgent.Close()
-	c.Close()
 }
 
 func main() {
