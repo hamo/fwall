@@ -32,9 +32,11 @@ func init() {
 }
 
 func handleConnection(c net.Conn) {
+	defer c.Close()
 	r, err := tunnel.NewServer(sc.Tunnel, sc.MasterKey, sc.EncryptMethod, logger)
 	if err != nil {
-		logger.Fatalf("Create tunnel failed: %s", err)
+		logger.Warningf("Create tunnel failed: %s", err)
+		return
 	}
 
 	r.Accept(c)
@@ -44,7 +46,6 @@ func handleConnection(c net.Conn) {
 	user := s.Accept(r)
 	ui, ok := udb.GetUserInfo(user)
 	if !ok {
-		c.Close()
 		return
 	}
 
@@ -53,23 +54,20 @@ func handleConnection(c net.Conn) {
 	_, addrPort, err := s.ParseUserHeader(r)
 	if err != nil {
 		logger.Errorf("ParseUserHeader failed: %v", err)
-		c.Close()
 		return
 	}
 
+	// shall we ues dialtimeout instead?
 	realServer, err := net.Dial("tcp", addrPort)
 
 	if err != nil {
-		logger.Errorf("err: %s", err)
-		c.Close()
+		logger.Errorf("err: %s | when dial real server", err)
 		return
 	}
+	defer realServer.Close()
 
 	go s.Upstream(r, realServer)
 	s.Downstream(r, realServer)
-
-	realServer.Close()
-	c.Close()
 }
 
 func main() {
