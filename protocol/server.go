@@ -28,16 +28,12 @@ func (s *Server) Accept(local tunnel.Reader) string {
 	len := make([]byte, 1)
 	_, err := local.ReadMaster(len, true)
 	if err != nil {
-		// FIXME
-		fmt.Printf("1")
 		return ""
 	}
 
 	u := make([]byte, len[0])
 	_, err = local.ReadMaster(u, true)
 	if err != nil {
-		// FIXME
-		fmt.Printf("2")
 		return ""
 	}
 	s.username = string(u)
@@ -49,14 +45,18 @@ func (s *Server) Accept(local tunnel.Reader) string {
 func (s *Server) ParseUserHeader(local tunnel.Reader) (UDPconnect bool, addrPort string, err error) {
 	magic := make([]byte, 1)
 	_, err = local.ReadUser(magic, true)
-
+	if err != nil {
+		return false, "", fmt.Errorf("Failed to read magic byte.")
+	}
 	if magic[0] != MagicByte {
 		return false, "", fmt.Errorf("Can not decode correctly.")
 	}
 
 	f := make([]byte, 1)
 	_, err = local.ReadUser(f, true)
-
+	if err != nil {
+		return false, "", fmt.Errorf("Failed to read flag.")
+	}
 	UDP := CheckUDPFlag(f[0])
 
 	switch {
@@ -84,6 +84,9 @@ func (s *Server) ParseUserHeader(local tunnel.Reader) (UDPconnect bool, addrPort
 
 	pb := make([]byte, 2)
 	_, err = local.ReadUser(pb, true)
+	if err != nil {
+		return false, "", fmt.Errorf("Failed to read port.")
+	}
 	p := binary.BigEndian.Uint16(pb)
 
 	addrPort = addrPort + strconv.Itoa(int(p))
