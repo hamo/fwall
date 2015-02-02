@@ -98,8 +98,8 @@ func (s *Server) Upstream(local tunnel.Reader, remote net.Conn) {
 	buf := make([]byte, compression.BufferSize)
 	for {
 		n, err := local.ReadContent(buf)
-		remote.Write(buf[:n])
-		if err != nil {
+		m, err2 := remote.Write(buf[:n])
+		if err != nil || err2 != nil || m != n {
 			break
 		}
 	}
@@ -109,8 +109,8 @@ func (s *Server) Downstream(local tunnel.Writer, remote net.Conn) {
 	buf := make([]byte, compression.BufferSize)
 	for {
 		n, err := remote.Read(buf)
-		local.WriteContent(buf[0:n])
-		if err != nil {
+		m, err2 := local.WriteContent(buf[0:n])
+		if err != nil || err2 != nil || m != n {
 			break
 		}
 	}
