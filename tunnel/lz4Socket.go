@@ -7,8 +7,8 @@ import (
 
 	"encrypt"
 
-	"github.com/hamo/golog"
 	lz4 "github.com/bkaradzic/go-lz4"
+	"github.com/hamo/golog"
 )
 
 type LZ4SocketClient struct {
@@ -53,7 +53,6 @@ func NewLZ4SocketServer(masterKey string, encryptMethod string, logger *golog.Go
 		},
 	}, nil
 }
-
 
 func (r *LZ4SocketClient) ReadContent(buf []byte) (int, error) {
 	var n int

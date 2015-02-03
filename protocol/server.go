@@ -15,12 +15,15 @@ import (
 type Server struct {
 	username string
 
+	UpstreamDone chan struct{}
+
 	logger *golog.GoLogger
 }
 
 func NewServer(logger *golog.GoLogger) *Server {
 	return &Server{
-		logger: logger,
+		logger:       logger,
+		UpstreamDone: make(chan struct{}),
 	}
 }
 
@@ -103,6 +106,7 @@ func (s *Server) Upstream(local tunnel.Reader, remote net.Conn) {
 			break
 		}
 	}
+	close(s.UpstreamDone)
 }
 
 func (s *Server) Downstream(local tunnel.Writer, remote net.Conn) {

@@ -3,9 +3,9 @@ package protocol
 import (
 	"encoding/binary"
 
+	"compression"
 	"net"
 	"tunnel"
-	"compression"
 
 	"github.com/hamo/golog"
 )
@@ -17,16 +17,19 @@ type Client struct {
 	address     []byte
 	port        uint16
 
+	UpstreamDone chan struct{}
+
 	logger *golog.GoLogger
 }
 
 func NewClient(username string, addressType byte, address []byte, port uint16, logger *golog.GoLogger) *Client {
 	return &Client{
-		username:    username,
-		addressType: addressType,
-		address:     address,
-		port:        port,
-		logger:      logger,
+		username:     username,
+		addressType:  addressType,
+		address:      address,
+		port:         port,
+		UpstreamDone: make(chan struct{}),
+		logger:       logger,
 	}
 }
 
@@ -90,6 +93,8 @@ func (c *Client) Upstream(client net.Conn, server tunnel.Writer) {
 			break
 		}
 	}
+
+	close(c.UpstreamDone)
 }
 
 func (c *Client) Downstream(client net.Conn, server tunnel.Reader) {
