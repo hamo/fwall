@@ -68,8 +68,6 @@ func handleTCPConnection(c net.Conn) {
 	client := protocol.NewClient(lc.Username, addressType, address, port, logger)
 	go client.Upstream(c, proxyAgent)
 	client.Downstream(c, proxyAgent)
-
-	<-client.UpstreamDone
 }
 
 func main() {

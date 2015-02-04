@@ -28,7 +28,7 @@ type DBBase struct {
 
 func NewDB(dbpath string) (DB, error) {
 	if strings.HasPrefix(dbpath, "file://") {
-		return NewFileDB(dbpath)
+		return NewFileDB(dbpath);
 	}
 	return nil, fmt.Errorf("dbpath %s does not support.", dbpath)
 }

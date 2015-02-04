@@ -51,6 +51,7 @@ func NewRawSocketServer(masterKey string, encryptMethod string, logger *golog.Go
 	}, nil
 }
 
+
 func (r *RawSocketClient) ReadContent(buf []byte) (int, error) {
 	if r.userEncryptR == nil {
 		// call readuser from client, wait for iv ready

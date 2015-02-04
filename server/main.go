@@ -68,8 +68,6 @@ func handleConnection(c net.Conn) {
 
 	go s.Upstream(r, realServer)
 	s.Downstream(r, realServer)
-
-	<-s.UpstreamDone
 }
 
 func main() {
