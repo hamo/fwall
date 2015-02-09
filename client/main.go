@@ -50,7 +50,11 @@ func handleTCPConnection(c net.Conn) {
 	logger.Debugf("addressType: %d\n", addressType)
 	logger.Debugf("port: %d\n", port)
 
-	c.Write(reqAnswer)
+	_, err = c.Write(reqAnswer)
+	if err != nil {
+		logger.Warningf("write req answer failed: %s", err)
+		return
+	}
 
 	proxyAgent, err := tunnel.NewClient(lc.Tunnel, lc.Server, lc.ServerPort, lc.MasterKey, lc.EncryptMethod, lc.Password, logger)
 	if err != nil {

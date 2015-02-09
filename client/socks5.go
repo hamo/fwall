@@ -29,8 +29,8 @@ func handShake(c net.Conn) error {
 		return fmt.Errorf("Protocol mismatch: %d", protoVersion)
 	}
 
-	c.Write(handShakeAnswer)
-	return nil
+	_, err = c.Write(handShakeAnswer)
+	return err
 }
 
 // commandCode, addressType, address, port, err
@@ -85,8 +85,8 @@ func parseReq(c net.Conn) (byte, byte, []byte, uint16, error) {
 	}
 
 	var port uint16
-	binary.Read(r, binary.BigEndian, &port)
+	err = binary.Read(r, binary.BigEndian, &port)
 
 	// commandCode, addressType, address, port, err
-	return commandCode, addressType, address.Bytes(), port, nil
+	return commandCode, addressType, address.Bytes(), port, err
 }
