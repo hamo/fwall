@@ -3,7 +3,7 @@ package tunnel
 import (
 	"fmt"
 
-	"encrypt"
+	"github.com/hamo/fwall/encrypt"
 
 	"github.com/hamo/golog"
 )

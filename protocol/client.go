@@ -3,9 +3,9 @@ package protocol
 import (
 	"encoding/binary"
 
+	"github.com/hamo/fwall/compression"
+	"github.com/hamo/fwall/tunnel"
 	"net"
-	"tunnel"
-	"compression"
 
 	"github.com/hamo/golog"
 )

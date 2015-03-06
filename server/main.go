@@ -7,9 +7,9 @@ import (
 	"os"
 	"runtime"
 
-	"protocol"
-	"tunnel"
-	"userdb"
+	"github.com/hamo/fwall/protocol"
+	"github.com/hamo/fwall/tunnel"
+	"github.com/hamo/fwall/userdb"
 
 	"github.com/hamo/golog"
 )

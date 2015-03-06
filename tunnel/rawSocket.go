@@ -3,7 +3,7 @@ package tunnel
 import (
 	"fmt"
 
-	"encrypt"
+	"github.com/hamo/fwall/encrypt"
 
 	"github.com/hamo/golog"
 )
@@ -50,7 +50,6 @@ func NewRawSocketServer(masterKey string, encryptMethod string, logger *golog.Go
 		},
 	}, nil
 }
-
 
 func (r *RawSocketClient) ReadContent(buf []byte) (int, error) {
 	if r.userEncryptR == nil {

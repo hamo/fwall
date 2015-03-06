@@ -1,11 +1,11 @@
 package tunnel
 
 import (
-	"net"
-	"github.com/hamo/golog"
-	"encrypt"
-	"io"
 	"fmt"
+	"github.com/hamo/fwall/encrypt"
+	"github.com/hamo/golog"
+	"io"
+	"net"
 )
 
 type Reader interface {
@@ -31,7 +31,7 @@ type Writer interface {
 }
 
 type ProxyAgent interface {
-	Dial() (error)
+	Dial() error
 	Accept(c net.Conn)
 	Close()
 	SetPassword(passwd string)

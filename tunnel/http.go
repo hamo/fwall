@@ -2,7 +2,7 @@ package tunnel
 
 import (
 	"crypto/aes"
-	"encrypt"
+	"github.com/hamo/fwall/encrypt"
 	"io"
 	"net"
 	"strconv"

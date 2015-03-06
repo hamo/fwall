@@ -6,8 +6,8 @@ import (
 	"net"
 	"os"
 
-	"protocol"
-	"tunnel"
+	"github.com/hamo/fwall/protocol"
+	"github.com/hamo/fwall/tunnel"
 
 	"github.com/hamo/golog"
 )

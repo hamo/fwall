@@ -6,8 +6,8 @@ import (
 	"net"
 	"strconv"
 
-	"compression"
-	"tunnel"
+	"github.com/hamo/fwall/compression"
+	"github.com/hamo/fwall/tunnel"
 
 	"github.com/hamo/golog"
 )

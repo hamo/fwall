@@ -6,4 +6,4 @@ go:
   - tip
 
 script:
-  - make test
+  - go test github.com/hamo/fwall/...
