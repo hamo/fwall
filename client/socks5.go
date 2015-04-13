@@ -42,6 +42,14 @@ func parseReq(c net.Conn) (byte, byte, []byte, uint16, error) {
 		return 0, 0, nil, 0, err
 	}
 
+	// FIXME: Don't ask me why. I don't know.
+	if protoVersion == 0x02 {
+		protoVersion, err = r.ReadByte()
+		if err != nil {
+			return 0, 0, nil, 0, err
+		}
+	}
+
 	if protoVersion != 0x05 {
 		return 0, 0, nil, 0, fmt.Errorf("Protocol mismatch: %d", protoVersion)
 	}
