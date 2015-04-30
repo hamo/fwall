@@ -64,6 +64,7 @@ func handleConnection(c net.Conn) {
 		logger.Errorf("err: %s | when dial real server", err)
 		return
 	}
+	realServer.(*net.TCPConn).SetNoDelay(false)
 	defer realServer.Close()
 
 	go s.Upstream(r, realServer)
