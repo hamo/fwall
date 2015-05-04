@@ -118,6 +118,9 @@ type ServerBase struct {
 
 func (r *ClientBase) Dial() error {
 	c, err := net.Dial("tcp", fmt.Sprintf("%s:%d", r.addr, r.port))
+	if err != nil {
+		return err
+	}
 	c.(*net.TCPConn).SetNoDelay(false)
 	r.c = c
 	return err
