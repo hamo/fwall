@@ -75,23 +75,32 @@ func (s *Server) ParseUserHeader(local tunnel.Reader) (UDPconnect bool, addrPort
 		local.ReadUser(v4, true)
 		addrPort = addrPort + net.IP(v4).String()
 
+		addrPort = addrPort + ":"
+
+		pb := make([]byte, 2)
+		_, err = local.ReadUser(pb, true)
+		if err != nil {
+			return false, "", fmt.Errorf("Failed to read port.")
+		}
+		p := binary.BigEndian.Uint16(pb)
+
+		addrPort = addrPort + strconv.Itoa(int(p))
+
 	case CheckIPv6Flag(f[0]):
 		v6 := make([]byte, 16)
 		local.ReadUser(v6, true)
 		addrPort = "[" + net.IP(v6).String() + "]"
+
+		addrPort = addrPort + ":"
+
+		pb := make([]byte, 2)
+		_, err = local.ReadUser(pb, true)
+		if err != nil {
+			return false, "", fmt.Errorf("Failed to read port.")
+		}
+		p := binary.BigEndian.Uint16(pb)
+		addrPort = addrPort + strconv.Itoa(int(p))
 	}
-
-	addrPort = addrPort + ":"
-
-	pb := make([]byte, 2)
-	_, err = local.ReadUser(pb, true)
-	if err != nil {
-		return false, "", fmt.Errorf("Failed to read port.")
-	}
-	p := binary.BigEndian.Uint16(pb)
-
-	addrPort = addrPort + strconv.Itoa(int(p))
-
 	return UDP, addrPort, nil
 }
 

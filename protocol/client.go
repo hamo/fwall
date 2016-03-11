@@ -67,6 +67,9 @@ func (c *Client) Upstream(client net.Conn, server tunnel.Writer) {
 		fallthrough
 	case 0x04: //IPv6
 		uh = append(uh, c.address...)
+		p := make([]byte, 2)
+		binary.BigEndian.PutUint16(p, c.port)
+		uh = append(uh, p...)
 	case 0x03: //Domain
 		ali := len(c.address)
 		if ali > 65535 {
@@ -79,11 +82,6 @@ func (c *Client) Upstream(client net.Conn, server tunnel.Writer) {
 		uh = append(uh, alb...)
 		uh = append(uh, c.address...)
 	}
-
-	p := make([]byte, 2)
-	binary.BigEndian.PutUint16(p, c.port)
-
-	uh = append(uh, p...)
 
 	server.WriteUser(uh)
 
