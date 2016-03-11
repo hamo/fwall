@@ -61,10 +61,11 @@ func (s *Server) ParseUserHeader(local tunnel.Reader) (UDPconnect bool, addrPort
 
 	switch {
 	case CheckDomainFlag(f[0]):
-		dl := make([]byte, 1)
+		dl := make([]byte, 2)
 		local.ReadUser(dl, true)
+		dLen := binary.BigEndian.Uint16(dl)
 
-		d := make([]byte, dl[0])
+		d := make([]byte, dLen)
 		local.ReadUser(d, true)
 
 		addrPort = addrPort + string(d)

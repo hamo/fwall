@@ -69,8 +69,14 @@ func (c *Client) Upstream(client net.Conn, server tunnel.Writer) {
 		uh = append(uh, c.address...)
 	case 0x03: //Domain
 		ali := len(c.address)
-		alb := byte(ali & 0xFF)
-		uh = append(uh, alb)
+		if ali > 65535 {
+			ali = 65535
+			c.address = c.address[:65535]
+		}
+		alt := uint16(ali)
+		alb := make([]byte, 2)
+		binary.BigEndian.PutUint16(alb, alt)
+		uh = append(uh, alb...)
 		uh = append(uh, c.address...)
 	}
 
