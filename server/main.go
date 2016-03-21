@@ -62,6 +62,7 @@ func handleConnection(c net.Conn) {
 
 	if err != nil {
 		logger.Errorf("err: %s | when dial real server", err)
+		logger.Errorf("└  the real server should be: %s", addrPort)
 		return
 	}
 	realServer.(*net.TCPConn).SetNoDelay(false)
